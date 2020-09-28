@@ -3327,31 +3327,7 @@ type
   end;
   PIVRBlockQueue = ^TIVRBlockQueue;
 
-
 var
-  IVRSystem: TIVRSystem;
-  IVRExtendedDisplay: TIVRExtendedDisplay;
-  IVRTrackedCamera: TIVRTrackedCamera;
-  IVRApplications: TIVRApplications;
-  IVRChaperone: TIVRChaperone;
-  IVRChaperoneSetup: TIVRChaperoneSetup;
-  IVRCompositor: TIVRCompositor;
-  IVROverlay: TIVROverlay;
-  IVROverlayView: TIVROverlayView;
-  IVRHeadsetView: TIVRHeadsetView;
-  IVRRenderModels: TIVRRenderModels;
-  IVRNotifications: TIVRNotifications;
-  IVRSettings: TIVRSettings;
-  IVRScreenshots: TIVRScreenshots;
-  IVRResources: TIVRResources;
-  IVRDriverManager: TIVRDriverManager;
-  IVRInput: TIVRInput;
-  IVRIOBuffer: TIVRIOBuffer;
-  IVRSpatialAnchors: TIVRSpatialAnchors;
-  IVRDebug: TIVRDebug;
-  IVRProperties: TIVRProperties;
-  IVRPaths: TIVRPaths;
-  IVRBlockQueue: TIVRBlockQueue;
   VR_InitInternal: FnTable_VR_InitInternal;
   VR_ShutdownInternal: FnTable_VR_ShutdownInternal;
   VR_IsHmdPresent: FnTable_VR_IsHmdPresent;
@@ -3359,7 +3335,6 @@ var
   VR_IsRuntimeInstalled: FnTable_VR_IsRuntimeInstalled;
   VR_GetVRInitErrorAsSymbol: FnTable_VR_GetVRInitErrorAsSymbol;
   VR_GetVRInitErrorAsEnglishDescription: FnTable_VR_GetVRInitErrorAsEnglishDescription;
-
 
 function OpenVR_Load: Boolean;
 
