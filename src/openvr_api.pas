@@ -1,3 +1,5 @@
+{ OpenVR SDK 1.14.15 }
+
 unit openvr_api;
 
 {$mode delphi}
@@ -210,6 +212,7 @@ type
     Prop_DriverProvidedChaperoneVisibility_Bool = 2076,
     Prop_HmdColumnCorrectionSettingPrefix_String = 2077,
     Prop_CameraSupportsCompatibilityModes_Bool = 2078,
+    Prop_SupportsRoomViewDepthProjection_Bool = 2079,
     Prop_DisplayAvailableFrameRates_Float_Array = 2080,
     Prop_DisplaySupportsMultipleFramerates_Bool = 2081,
     Prop_DisplayColorMultLeft_Vector3 = 2082,
@@ -233,6 +236,7 @@ type
     Prop_Audio_DefaultPlaybackDeviceId_String = 2300,
     Prop_Audio_DefaultRecordingDeviceId_String = 2301,
     Prop_Audio_DefaultPlaybackDeviceVolume_Float = 2302,
+    Prop_Audio_SupportsDualSpeakerAndJackOutput_Bool = 2303,
     Prop_AttachedDeviceId_String = 3000,
     Prop_SupportedButtons_Uint64 = 3001,
     Prop_Axis0Type_Int32 = 3002,
@@ -399,6 +403,8 @@ type
     VREvent_RoomViewHidden = 527,
     VREvent_ShowUI = 528,
     VREvent_ShowDevTools = 529,
+    VREvent_DesktopViewUpdating = 530,
+    VREvent_DesktopViewReady = 531,
     VREvent_Notification_Shown = 600,
     VREvent_Notification_Hidden = 601,
     VREvent_Notification_BeginInteraction = 602,
@@ -416,6 +422,7 @@ type
     VREvent_ChaperoneFlushCache = 805,
     VREvent_ChaperoneRoomSetupStarting = 806,
     VREvent_ChaperoneRoomSetupFinished = 807,
+    VREvent_StandingZeroPoseReset = 808,
     VREvent_AudioSettingsHaveChanged = 820,
     VREvent_BackgroundSettingHasChanged = 850,
     VREvent_CameraSettingsHaveChanged = 851,
@@ -663,7 +670,8 @@ type
     VRApplication_SteamWatchdog = 6,
     VRApplication_Bootstrapper = 7,
     VRApplication_WebHelper = 8,
-    VRApplication_Max = 9
+    VRApplication_OpenXR = 9,
+    VRApplication_Max = 10
   );
 
   EVRFirmwareError = (
@@ -1322,6 +1330,7 @@ type
     x: cfloat;
     y: cfloat;
   end;
+  PVRControllerAxis_t = ^VRControllerAxis_t;
   TVRControllerAxis_t5 = array [0..4] of VRControllerAxis_t;
 
   VRControllerState001_t = record
@@ -1330,6 +1339,7 @@ type
     ulButtonTouched: cuint64;
     rAxis: TVRControllerAxis_t5;
   end;
+  PVRControllerState001_t = ^VRControllerState001_t;
   VRControllerState_t = VRControllerState001_t;
   VROverlayHandle_t = cuint64;
   BoneIndex_t = cint32;
@@ -1363,31 +1373,38 @@ type
   HmdMatrix34_t = record
     m: TFloat3x4;
   end;
+  PHmdMatrix34_t = ^HmdMatrix34_t;
 
   HmdMatrix33_t = record
     m: TFloat3x3;
   end;
+  PHmdMatrix33_t = ^HmdMatrix33_t;
 
   HmdMatrix44_t = record
     m: TFloat4x4;
   end;
+  PHmdMatrix44_t = ^HmdMatrix44_t;
 
   HmdVector3_t = record
     v: TFloat3;
   end;
+  PHmdVector3_t = ^HmdVector3_t;
   THmdVector3_t4 = array [0..3] of HmdVector3_t;
 
   HmdVector4_t = record
     v: TFloat4;
   end;
+  PHmdVector4_t = ^HmdVector4_t;
 
   HmdVector3d_t = record
     v: TDouble3;
   end;
+  PHmdVector3d_t = ^HmdVector3d_t;
 
   HmdVector2_t = record
     v: TFloat2;
   end;
+  PHmdVector2_t = ^HmdVector2_t;
 
   HmdQuaternion_t = record
     w: cdouble;
@@ -1395,6 +1412,7 @@ type
     y: cdouble;
     z: cdouble;
   end;
+  PHmdQuaternion_t = ^HmdQuaternion_t;
 
   HmdQuaternionf_t = record
     w: cfloat;
@@ -1402,6 +1420,7 @@ type
     y: cfloat;
     z: cfloat;
   end;
+  PHmdQuaternionf_t = ^HmdQuaternionf_t;
 
   HmdColor_t = record
     r: cfloat;
@@ -1409,27 +1428,32 @@ type
     b: cfloat;
     a: cfloat;
   end;
+  PHmdColor_t = ^HmdColor_t;
 
   HmdQuad_t = record
     vCorners: THmdVector3_t4;
   end;
+  PHmdQuad_t = ^HmdQuad_t;
 
   HmdRect2_t = record
     vTopLeft: HmdVector2_t;
     vBottomRight: HmdVector2_t;
   end;
+  PHmdRect2_t = ^HmdRect2_t;
 
   DistortionCoordinates_t = record
     rfRed: TFloat2;
     rfGreen: TFloat2;
     rfBlue: TFloat2;
   end;
+  PDistortionCoordinates_t = ^DistortionCoordinates_t;
 
   Texture_t = record
     handle: Pointer;
     eType: ETextureType;
     eColorSpace: EColorSpace;
   end;
+  PTexture_t = ^Texture_t;
 
   TrackedDevicePose_t = record
     mDeviceToAbsoluteTracking: HmdMatrix34_t;
@@ -1439,6 +1463,7 @@ type
     bPoseIsValid: cbool;
     bDeviceIsConnected: cbool;
   end;
+  PTrackedDevicePose_t = ^TrackedDevicePose_t;
 
   VRTextureBounds_t = record
     uMin: cfloat;
@@ -1446,24 +1471,29 @@ type
     uMax: cfloat;
     vMax: cfloat;
   end;
+  PVRTextureBounds_t = ^VRTextureBounds_t;
 
   VRTextureWithPose_t = record
     mDeviceToAbsoluteTracking: HmdMatrix34_t;
   end;
+  PVRTextureWithPose_t = ^VRTextureWithPose_t;
 
   VRTextureDepthInfo_t = record
     handle: Pointer;
     mProjection: HmdMatrix44_t;
     vRange: HmdVector2_t;
   end;
+  PVRTextureDepthInfo_t = ^VRTextureDepthInfo_t;
 
   VRTextureWithDepth_t = record
     depth: VRTextureDepthInfo_t;
   end;
+  PVRTextureWithDepth_t = ^VRTextureWithDepth_t;
 
   VRTextureWithPoseAndDepth_t = record
     depth: VRTextureDepthInfo_t;
   end;
+  PVRTextureWithPoseAndDepth_t = ^VRTextureWithPoseAndDepth_t;
 
   VRVulkanTextureData_t = record
     m_nImage: cuint64;
@@ -1477,27 +1507,32 @@ type
     m_nFormat: cuint32;
     m_nSampleCount: cuint32;
   end;
+  PVRVulkanTextureData_t = ^VRVulkanTextureData_t;
 
   VRVulkanTextureArrayData_t = record
     m_unArrayIndex: cuint32;
     m_unArraySize: cuint32;
   end;
+  PVRVulkanTextureArrayData_t = ^VRVulkanTextureArrayData_t;
 
   D3D12TextureData_t = record
     m_pResource: Pointer {ID3D12Resource};
     m_pCommandQueue: Pointer {ID3D12CommandQueue};
     m_nNodeMask: cuint32;
   end;
+  PD3D12TextureData_t = ^D3D12TextureData_t;
 
   VREvent_Controller_t = record
     button: cuint32;
   end;
+  PVREvent_Controller_t = ^VREvent_Controller_t;
 
   VREvent_Mouse_t = record
     x: cfloat;
     y: cfloat;
     button: cuint32;
   end;
+  PVREvent_Mouse_t = ^VREvent_Mouse_t;
 
   VREvent_Scroll_t = record
     xdelta: cfloat;
@@ -1505,6 +1540,7 @@ type
     unused: cuint32;
     viewportscale: cfloat;
   end;
+  PVREvent_Scroll_t = ^VREvent_Scroll_t;
 
   VREvent_TouchPadMove_t = record
     bFingerDown: cbool;
@@ -1514,11 +1550,13 @@ type
     fValueXRaw: cfloat;
     fValueYRaw: cfloat;
   end;
+  PVREvent_TouchPadMove_t = ^VREvent_TouchPadMove_t;
 
   VREvent_Notification_t = record
     ulUserValue: cuint64;
     notificationId: cuint32;
   end;
+  PVREvent_Notification_t = ^VREvent_Notification_t;
 
   VREvent_Process_t = record
     pid: cuint32;
@@ -1526,29 +1564,35 @@ type
     bForced: cbool;
     bConnectionLost: cbool;
   end;
+  PVREvent_Process_t = ^VREvent_Process_t;
 
   VREvent_Overlay_t = record
     overlayHandle: cuint64;
     devicePath: cuint64;
   end;
+  PVREvent_Overlay_t = ^VREvent_Overlay_t;
 
   VREvent_Status_t = record
     statusState: cuint32;
   end;
+  PVREvent_Status_t = ^VREvent_Status_t;
 
   VREvent_Keyboard_t = record
     cNewInput: TChar8;
     uUserValue: cuint64;
   end;
+  PVREvent_Keyboard_t = ^VREvent_Keyboard_t;
 
   VREvent_Ipd_t = record
     ipdMeters: cfloat;
   end;
+  PVREvent_Ipd_t = ^VREvent_Ipd_t;
 
   VREvent_Chaperone_t = record
     m_nPreviousUniverse: cuint64;
     m_nCurrentUniverse: cuint64;
   end;
+  PVREvent_Chaperone_t = ^VREvent_Chaperone_t;
 
   VREvent_Reserved_t = record
     reserved0: cuint64;
@@ -1558,42 +1602,51 @@ type
     reserved4: cuint64;
     reserved5: cuint64;
   end;
+  PVREvent_Reserved_t = ^VREvent_Reserved_t;
 
   VREvent_PerformanceTest_t = record
     m_nFidelityLevel: cuint32;
   end;
+  PVREvent_PerformanceTest_t = ^VREvent_PerformanceTest_t;
 
   VREvent_SeatedZeroPoseReset_t = record
     bResetBySystemMenu: cbool;
   end;
+  PVREvent_SeatedZeroPoseReset_t = ^VREvent_SeatedZeroPoseReset_t;
 
   VREvent_Screenshot_t = record
     handle: cuint32;
     type_: cuint32;
   end;
+  PVREvent_Screenshot_t = ^VREvent_Screenshot_t;
 
   VREvent_ScreenshotProgress_t = record
     progress: cfloat;
   end;
+  PVREvent_ScreenshotProgress_t = ^VREvent_ScreenshotProgress_t;
 
   VREvent_ApplicationLaunch_t = record
     pid: cuint32;
     unArgsHandle: cuint32;
   end;
+  PVREvent_ApplicationLaunch_t = ^VREvent_ApplicationLaunch_t;
 
   VREvent_EditingCameraSurface_t = record
     overlayHandle: cuint64;
     nVisualMode: cuint32;
   end;
+  PVREvent_EditingCameraSurface_t = ^VREvent_EditingCameraSurface_t;
 
   VREvent_MessageOverlay_t = record
     unVRMessageOverlayResponse: cuint32;
   end;
+  PVREvent_MessageOverlay_t = ^VREvent_MessageOverlay_t;
 
   VREvent_Property_t = record
     container: PropertyContainerHandle_t;
     prop: ETrackedDeviceProperty;
   end;
+  PVREvent_Property_t = ^VREvent_Property_t;
 
   VREvent_HapticVibration_t = record
     containerHandle: cuint64;
@@ -1602,10 +1655,12 @@ type
     fFrequency: cfloat;
     fAmplitude: cfloat;
   end;
+  PVREvent_HapticVibration_t = ^VREvent_HapticVibration_t;
 
   VREvent_WebConsole_t = record
     webConsoleHandle: WebConsoleHandle_t;
   end;
+  PVREvent_WebConsole_t = ^VREvent_WebConsole_t;
 
   VREvent_InputBindingLoad_t = record
     ulAppContainer: PropertyContainerHandle_t;
@@ -1613,6 +1668,7 @@ type
     pathUrl: cuint64;
     pathControllerType: cuint64;
   end;
+  PVREvent_InputBindingLoad_t = ^VREvent_InputBindingLoad_t;
 
   VREvent_InputActionManifestLoad_t = record
     pathAppKey: cuint64;
@@ -1620,10 +1676,12 @@ type
     pathMessageParam: cuint64;
     pathManifestPath: cuint64;
   end;
+  PVREvent_InputActionManifestLoad_t = ^VREvent_InputActionManifestLoad_t;
 
   VREvent_SpatialAnchor_t = record
     unHandle: SpatialAnchorHandle_t;
   end;
+  PVREvent_SpatialAnchor_t = ^VREvent_SpatialAnchor_t;
 
   VREvent_ProgressUpdate_t = record
     ulApplicationPropertyContainer: cuint64;
@@ -1633,18 +1691,22 @@ type
     pathIcon: cuint64;
     fProgress: cfloat;
   end;
+  PVREvent_ProgressUpdate_t = ^VREvent_ProgressUpdate_t;
 
   VREvent_ShowUI_t = record
     eType: EShowUIType;
   end;
+  PVREvent_ShowUI_t = ^VREvent_ShowUI_t;
 
   VREvent_ShowDevTools_t = record
     nBrowserIdentifier: cint32;
   end;
+  PVREvent_ShowDevTools_t = ^VREvent_ShowDevTools_t;
 
   VREvent_HDCPError_t = record
     eCode: EHDCPError;
   end;
+  PVREvent_HDCPError_t = ^VREvent_HDCPError_t;
 
   anonymous = record
     reserved: VREvent_Reserved_t;
@@ -1677,6 +1739,7 @@ type
     showDevTools: VREvent_ShowDevTools_t;
     hdcpError: VREvent_HDCPError_t;
   end;
+  Panonymous = ^anonymous;
 
   VREvent_t = record
     eventType: cuint32;
@@ -1684,22 +1747,26 @@ type
     eventAgeSeconds: cfloat;
     data: VREvent_Data_t;
   end;
+  PVREvent_t = ^VREvent_t;
 
   RenderModel_ComponentState_t = record
     mTrackingToComponentRenderModel: HmdMatrix34_t;
     mTrackingToComponentLocal: HmdMatrix34_t;
     uProperties: VRComponentProperties;
   end;
+  PRenderModel_ComponentState_t = ^RenderModel_ComponentState_t;
 
   HiddenAreaMesh_t = record
     pVertexData: Pointer {HmdVector2_t};
     unTriangleCount: cuint32;
   end;
+  PHiddenAreaMesh_t = ^HiddenAreaMesh_t;
 
   VRBoneTransform_t = record
     position: HmdVector4_t;
     orientation: HmdQuaternionf_t;
   end;
+  PVRBoneTransform_t = ^VRBoneTransform_t;
 
   CameraVideoStreamFrameHeader_t = record
     eFrameType: EVRTrackedCameraFrameType;
@@ -1710,6 +1777,7 @@ type
     trackedDevicePose: TrackedDevicePose_t;
     ulFrameExposureTime: cuint64;
   end;
+  PCameraVideoStreamFrameHeader_t = ^CameraVideoStreamFrameHeader_t;
 
   Compositor_FrameTiming = record
     m_nSize: cuint32;
@@ -1739,11 +1807,13 @@ type
     m_nNumVSyncsReadyForUse: cuint32;
     m_nNumVSyncsToFirstView: cuint32;
   end;
+  PCompositor_FrameTiming = ^Compositor_FrameTiming;
 
   Compositor_BenchmarkResults = record
     m_flMegaPixelsPerSecond: cfloat;
     m_flHmdRecommendedMegaPixelsPerSecond: cfloat;
   end;
+  PCompositor_BenchmarkResults = ^Compositor_BenchmarkResults;
 
   DriverDirectMode_FrameTiming = record
     m_nSize: cuint32;
@@ -1752,6 +1822,7 @@ type
     m_nNumDroppedFrames: cuint32;
     m_nReprojectionFlags: cuint32;
   end;
+  PDriverDirectMode_FrameTiming = ^DriverDirectMode_FrameTiming;
 
   ImuSample_t = record
     fSampleTime: cdouble;
@@ -1759,11 +1830,13 @@ type
     vGyro: HmdVector3d_t;
     unOffScaleFlags: cuint32;
   end;
+  PImuSample_t = ^ImuSample_t;
 
   AppOverrideKeys_t = record
     pchKey: PChar;
     pchValue: PChar;
   end;
+  PAppOverrideKeys_t = ^AppOverrideKeys_t;
 
   Compositor_CumulativeStats = record
     m_nPid: cuint32;
@@ -1782,6 +1855,7 @@ type
     m_nNumDroppedFramesTimedOut: cuint32;
     m_nNumReprojectedFramesTimedOut: cuint32;
   end;
+  PCompositor_CumulativeStats = ^Compositor_CumulativeStats;
 
   Compositor_StageRenderSettings = record
     m_PrimaryColor: HmdColor_t;
@@ -1793,12 +1867,14 @@ type
     m_bGreyscale: cbool;
     m_bWireframe: cbool;
   end;
+  PCompositor_StageRenderSettings = ^Compositor_StageRenderSettings;
 
   VROverlayIntersectionParams_t = record
     vSource: HmdVector3_t;
     vDirection: HmdVector3_t;
     eOrigin: ETrackingUniverseOrigin;
   end;
+  PVROverlayIntersectionParams_t = ^VROverlayIntersectionParams_t;
 
   VROverlayIntersectionResults_t = record
     vPoint: HmdVector3_t;
@@ -1806,6 +1882,7 @@ type
     vUVs: HmdVector2_t;
     fDistance: cfloat;
   end;
+  PVROverlayIntersectionResults_t = ^VROverlayIntersectionResults_t;
 
   IntersectionMaskRectangle_t = record
     m_flTopLeftX: cfloat;
@@ -1813,28 +1890,33 @@ type
     m_flWidth: cfloat;
     m_flHeight: cfloat;
   end;
+  PIntersectionMaskRectangle_t = ^IntersectionMaskRectangle_t;
 
   IntersectionMaskCircle_t = record
     m_flCenterX: cfloat;
     m_flCenterY: cfloat;
     m_flRadius: cfloat;
   end;
+  PIntersectionMaskCircle_t = ^IntersectionMaskCircle_t;
 
   anonymous2 = record
     m_Rectangle: IntersectionMaskRectangle_t;
     m_Circle: IntersectionMaskCircle_t;
   end;
+  Panonymous2 = ^anonymous2;
 
   VROverlayIntersectionMaskPrimitive_t = record
     m_nPrimitiveType: EVROverlayIntersectionMaskPrimitiveType;
     m_Primitive: VROverlayIntersectionMaskPrimitive_Data_t;
   end;
+  PVROverlayIntersectionMaskPrimitive_t = ^VROverlayIntersectionMaskPrimitive_t;
 
   VROverlayView_t = record
     overlayHandle: VROverlayHandle_t;
     texture: Texture_t;
     textureBounds: VRTextureBounds_t;
   end;
+  PVROverlayView_t = ^VROverlayView_t;
 
   VRVulkanDevice_t = record
     m_pInstance: Pointer {VkInstance_T};
@@ -1843,17 +1925,20 @@ type
     m_pQueue: Pointer {VkQueue_T};
     m_uQueueFamilyIndex: cuint32;
   end;
+  PVRVulkanDevice_t = ^VRVulkanDevice_t;
 
   VRNativeDevice_t = record
     handle: Pointer;
     eType: EDeviceType;
   end;
+  PVRNativeDevice_t = ^VRNativeDevice_t;
 
   RenderModel_Vertex_t = record
     vPosition: HmdVector3_t;
     vNormal: HmdVector3_t;
     rfTextureCoord: TFloat2;
   end;
+  PRenderModel_Vertex_t = ^RenderModel_Vertex_t;
 
   RenderModel_TextureMap_t = record
     unWidth: cuint16;
@@ -1861,6 +1946,7 @@ type
     rubTextureMapData: Pointer {uint8_t};
     format: EVRRenderModelTextureFormat;
   end;
+  PRenderModel_TextureMap_t = ^RenderModel_TextureMap_t;
 
   RenderModel_t = record
     rVertexData: Pointer {RenderModel_Vertex_t};
@@ -1869,21 +1955,25 @@ type
     unTriangleCount: cuint32;
     diffuseTextureId: TextureID_t;
   end;
+  PRenderModel_t = ^RenderModel_t;
 
   RenderModel_ControllerMode_State_t = record
     bScrollWheelVisible: cbool;
   end;
+  PRenderModel_ControllerMode_State_t = ^RenderModel_ControllerMode_State_t;
 
   NotificationBitmap_t = record
     m_pImageData: Pointer;
     m_nWidth: cint32;
     m_nHeight: cint32;
-    m_nBytesPerPixel: TVRControllerAxis_t5;
+    m_nBytesPerPixel: cint32;
   end;
+  PNotificationBitmap_t = ^NotificationBitmap_t;
 
   CVRSettingHelper = record
     m_pSettings: Pointer {FnTable_IVRSettings};
   end;
+  PCVRSettingHelper = ^CVRSettingHelper;
 
   InputAnalogActionData_t = record
     bActive: cbool;
@@ -1896,6 +1986,7 @@ type
     deltaZ: cfloat;
     fUpdateTime: cfloat;
   end;
+  PInputAnalogActionData_t = ^InputAnalogActionData_t;
 
   InputDigitalActionData_t = record
     bActive: cbool;
@@ -1904,23 +1995,27 @@ type
     bChanged: cbool;
     fUpdateTime: cfloat;
   end;
+  PInputDigitalActionData_t = ^InputDigitalActionData_t;
 
   InputPoseActionData_t = record
     bActive: cbool;
     activeOrigin: VRInputValueHandle_t;
     pose: TrackedDevicePose_t;
   end;
+  PInputPoseActionData_t = ^InputPoseActionData_t;
 
   InputSkeletalActionData_t = record
     bActive: cbool;
     activeOrigin: VRInputValueHandle_t;
   end;
+  PInputSkeletalActionData_t = ^InputSkeletalActionData_t;
 
   InputOriginInfo_t = record
     devicePath: VRInputValueHandle_t;
     trackedDeviceIndex: TrackedDeviceIndex_t;
     rchRenderModelComponentName: TChar128;
   end;
+  PInputOriginInfo_t = ^InputOriginInfo_t;
 
   InputBindingInfo_t = record
     rchDevicePathName: TChar128;
@@ -1929,6 +2024,7 @@ type
     rchSlotName: TChar128;
     rchInputSourceType: TChar32;
   end;
+  PInputBindingInfo_t = ^InputBindingInfo_t;
 
   VRActiveActionSet_t = record
     ulActionSet: VRActionSetHandle_t;
@@ -1937,15 +2033,18 @@ type
     unPadding: cuint32;
     nPriority: cint32;
   end;
+  PVRActiveActionSet_t = ^VRActiveActionSet_t;
 
   VRSkeletalSummaryData_t = record
     flFingerCurl: TFloat5;
     flFingerSplay: TFloat4;
   end;
+  PVRSkeletalSummaryData_t = ^VRSkeletalSummaryData_t;
 
   SpatialAnchorPose_t = record
     mAnchorToAbsoluteTracking: HmdMatrix34_t;
   end;
+  PSpatialAnchorPose_t = ^SpatialAnchorPose_t;
 
   COpenVRContext = record
     m_pVRSystem: Pointer {FnTable_IVRSystem};
@@ -1969,6 +2068,7 @@ type
     m_pVRDebug: Pointer {FnTable_IVRDebug};
     m_pVRNotifications: Pointer {FnTable_IVRNotifications};
   end;
+  PCOpenVRContext = ^COpenVRContext;
 
   PropertyWrite_t = record
     prop: ETrackedDeviceProperty;
@@ -1979,6 +2079,7 @@ type
     unTag: PropertyTypeTag_t;
     eError: ETrackedPropertyError;
   end;
+  PPropertyWrite_t = ^PropertyWrite_t;
 
   PropertyRead_t = record
     prop: ETrackedDeviceProperty;
@@ -1988,10 +2089,12 @@ type
     unRequiredBufferSize: cuint32;
     eError: ETrackedPropertyError;
   end;
+  PPropertyRead_t = ^PropertyRead_t;
 
   CVRPropertyHelpers = record
     m_pProperties: Pointer {FnTable_IVRProperties};
   end;
+  PCVRPropertyHelpers = ^CVRPropertyHelpers;
 
   PathWrite_t = record
     ulPath: PathHandle_t;
@@ -2003,6 +2106,7 @@ type
     eError: ETrackedPropertyError;
     pszPath: PChar;
   end;
+  PPathWrite_t = ^PathWrite_t;
 
   PathRead_t = record
     ulPath: PathHandle_t;
@@ -2013,6 +2117,7 @@ type
     eError: ETrackedPropertyError;
     pszPath: PChar;
   end;
+  PPathRead_t = ^PathRead_t;
 
 
 const
@@ -2058,14 +2163,14 @@ const
   k_ulOverlayHandleInvalid: VROverlayHandle_t = 0;
   k_unMaxDistortionFunctionParameters: cuint32 = 8;
   k_unScreenshotHandleInvalid: cuint32 = 0;
-  IVRSystem_Version: PChar = 'IVRSystem_021';
+  IVRSystem_Version: PChar = 'IVRSystem_022';
   IVRExtendedDisplay_Version: PChar = 'IVRExtendedDisplay_001';
   IVRTrackedCamera_Version: PChar = 'IVRTrackedCamera_006';
   k_unMaxApplicationKeyLength: cuint32 = 128;
   k_pch_MimeType_HomeApp: PChar = 'vr/home';
   k_pch_MimeType_GameTheater: PChar = 'vr/game_theater';
   IVRApplications_Version: PChar = 'IVRApplications_007';
-  IVRChaperone_Version: PChar = 'IVRChaperone_003';
+  IVRChaperone_Version: PChar = 'IVRChaperone_004';
   IVRChaperoneSetup_Version: PChar = 'IVRChaperoneSetup_006';
   IVRCompositor_Version: PChar = 'IVRCompositor_026';
   k_unVROverlayMaxKeyLength: cuint32 = 128;
@@ -2224,15 +2329,15 @@ const
   k_pch_CollisionBounds_EnableDriverImport: PChar = 'enableDriverBoundsImport';
   k_pch_Camera_Section: PChar = 'camera';
   k_pch_Camera_EnableCamera_Bool: PChar = 'enableCamera';
-  k_pch_Camera_EnableCameraInDashboard_Bool: PChar = 'enableCameraInDashboard';
+  k_pch_Camera_ShowOnController_Bool: PChar = 'showOnController';
   k_pch_Camera_EnableCameraForCollisionBounds_Bool: PChar = 'enableCameraForCollisionBounds';
-  k_pch_Camera_EnableCameraForRoomView_Bool: PChar = 'enableCameraForRoomView';
+  k_pch_Camera_RoomView_Int32: PChar = 'roomView';
   k_pch_Camera_BoundsColorGammaR_Int32: PChar = 'cameraBoundsColorGammaR';
   k_pch_Camera_BoundsColorGammaG_Int32: PChar = 'cameraBoundsColorGammaG';
   k_pch_Camera_BoundsColorGammaB_Int32: PChar = 'cameraBoundsColorGammaB';
   k_pch_Camera_BoundsColorGammaA_Int32: PChar = 'cameraBoundsColorGammaA';
   k_pch_Camera_BoundsStrength_Int32: PChar = 'cameraBoundsStrength';
-  k_pch_Camera_RoomViewMode_Int32: PChar = 'cameraRoomViewMode';
+  k_pch_Camera_RoomViewStyle_Int32: PChar = 'roomViewStyle';
   k_pch_audio_Section: PChar = 'audio';
   k_pch_audio_SetOsDefaultPlaybackDevice_Bool: PChar = 'setOsDefaultPlaybackDevice';
   k_pch_audio_EnablePlaybackDeviceOverride_Bool: PChar = 'enablePlaybackDeviceOverride';
@@ -2250,6 +2355,7 @@ const
   k_pch_audio_EnablePlaybackMirrorIndependentVolume_Bool: PChar = 'enablePlaybackMirrorIndependentVolume';
   k_pch_audio_LastHmdPlaybackDeviceId_String: PChar = 'lastHmdPlaybackDeviceId';
   k_pch_audio_VIVEHDMIGain: PChar = 'viveHDMIGain';
+  k_pch_audio_DualSpeakerAndJackOutput_Bool: PChar = 'dualSpeakerAndJackOutput';
   k_pch_Power_Section: PChar = 'power';
   k_pch_Power_PowerOffOnExit_Bool: PChar = 'powerOffOnExit';
   k_pch_Power_TurnOffScreensTimeout_Float: PChar = 'turnOffScreensTimeout';
@@ -2324,6 +2430,7 @@ const
   k_pchPathBoundTrackerRole: PChar = '/bound_tracker_role';
   k_pchPathPoseRaw: PChar = '/pose/raw';
   k_pchPathPoseTip: PChar = '/pose/tip';
+  k_pchPathPoseGrip: PChar = '/pose/grip';
   k_pchPathSystemButtonClick: PChar = '/input/system/click';
   k_pchPathProximity: PChar = '/proximity';
   k_pchPathControllerTypePrefix: PChar = '/controller_type/';
@@ -2351,6 +2458,14 @@ const
   IVRBlockQueue_Version: PChar = 'IVRBlockQueue_004';
 
 type
+  FnTable_VR_InitInternal = procedure(peError: Pointer; eType: EVRApplicationType); OVRCALL;
+  FnTable_VR_ShutdownInternal = procedure; OVRCALL;
+  FnTable_VR_IsHmdPresent = function: Boolean; OVRCALL;
+  FnTable_VR_GetGenericInterface = function(pchInterfaceVersion: PChar; peError: Pointer): Pointer; OVRCALL;
+  FnTable_VR_IsRuntimeInstalled = function: Boolean; OVRCALL;
+  FnTable_VR_GetVRInitErrorAsSymbol = function(error: EVRInitError): PChar; OVRCALL;
+  FnTable_VR_GetVRInitErrorAsEnglishDescription = function(error: EVRInitError): PChar; OVRCALL;
+
   FnTable_IVRSystem_GetRecommendedRenderTargetSize = procedure(pnWidth: Pointer {uint32_t}; pnHeight: Pointer {uint32_t}); OVRCALL;
   FnTable_IVRSystem_GetProjectionMatrix = function(eEye: EVREye; fNearZ: cfloat; fFarZ: cfloat): HmdMatrix44_t; OVRCALL;
   FnTable_IVRSystem_GetProjectionRaw = procedure(eEye: EVREye; pfLeft: Pointer {float}; pfRight: Pointer {float}; pfTop: Pointer {float}; pfBottom: Pointer {float}); OVRCALL;
@@ -2363,7 +2478,6 @@ type
   FnTable_IVRSystem_IsDisplayOnDesktop = function: cbool; OVRCALL;
   FnTable_IVRSystem_SetDisplayVisibility = function(bIsVisibleOnDesktop: cbool): cbool; OVRCALL;
   FnTable_IVRSystem_GetDeviceToAbsoluteTrackingPose = procedure(eOrigin: ETrackingUniverseOrigin; fPredictedSecondsToPhotonsFromNow: cfloat; pTrackedDevicePoseArray: Pointer {TrackedDevicePose_t}; unTrackedDevicePoseArrayCount: cuint32); OVRCALL;
-  FnTable_IVRSystem_ResetSeatedZeroPose = procedure; OVRCALL;
   FnTable_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose = function: HmdMatrix34_t; OVRCALL;
   FnTable_IVRSystem_GetRawZeroPoseToStandingAbsoluteTrackingPose = function: HmdMatrix34_t; OVRCALL;
   FnTable_IVRSystem_GetSortedTrackedDeviceIndicesOfClass = function(eTrackedDeviceClass: ETrackedDeviceClass; punTrackedDeviceIndexArray: Pointer {TrackedDeviceIndex_t}; unTrackedDeviceIndexArrayCount: cuint32; unRelativeToTrackedDeviceIndex: TrackedDeviceIndex_t): cuint32; OVRCALL;
@@ -2457,6 +2571,7 @@ type
   FnTable_IVRChaperone_GetBoundsColor = procedure(pOutputColorArray: Pointer {HmdColor_t}; nNumOutputColors: Integer; flCollisionBoundsFadeDistance: cfloat; pOutputCameraColor: Pointer {HmdColor_t}); OVRCALL;
   FnTable_IVRChaperone_AreBoundsVisible = function: cbool; OVRCALL;
   FnTable_IVRChaperone_ForceBoundsVisible = procedure(bForce: cbool); OVRCALL;
+  FnTable_IVRChaperone_ResetZeroPose = procedure(eTrackingUniverseOrigin: ETrackingUniverseOrigin); OVRCALL;
 
   FnTable_IVRChaperoneSetup_CommitWorkingCopy = function(configFile: EChaperoneConfigFile): cbool; OVRCALL;
   FnTable_IVRChaperoneSetup_RevertWorkingCopy = procedure; OVRCALL;
@@ -2761,7 +2876,6 @@ type
     IsDisplayOnDesktop: FnTable_IVRSystem_IsDisplayOnDesktop;
     SetDisplayVisibility: FnTable_IVRSystem_SetDisplayVisibility;
     GetDeviceToAbsoluteTrackingPose: FnTable_IVRSystem_GetDeviceToAbsoluteTrackingPose;
-    ResetSeatedZeroPose: FnTable_IVRSystem_ResetSeatedZeroPose;
     GetSeatedZeroPoseToStandingAbsoluteTrackingPose: FnTable_IVRSystem_GetSeatedZeroPoseToStandingAbsoluteTrackingPose;
     GetRawZeroPoseToStandingAbsoluteTrackingPose: FnTable_IVRSystem_GetRawZeroPoseToStandingAbsoluteTrackingPose;
     GetSortedTrackedDeviceIndicesOfClass: FnTable_IVRSystem_GetSortedTrackedDeviceIndicesOfClass;
@@ -2797,12 +2911,14 @@ type
     GetAppContainerFilePaths: FnTable_IVRSystem_GetAppContainerFilePaths;
     GetRuntimeVersion: FnTable_IVRSystem_GetRuntimeVersion;
   end;
+  PIVRSystem = ^TIVRSystem;
 
   TIVRExtendedDisplay = record
     GetWindowBounds: FnTable_IVRExtendedDisplay_GetWindowBounds;
     GetEyeOutputViewport: FnTable_IVRExtendedDisplay_GetEyeOutputViewport;
     GetDXGIOutputInfo: FnTable_IVRExtendedDisplay_GetDXGIOutputInfo;
   end;
+  PIVRExtendedDisplay = ^TIVRExtendedDisplay;
 
   TIVRTrackedCamera = record
     GetCameraErrorNameFromEnum: FnTable_IVRTrackedCamera_GetCameraErrorNameFromEnum;
@@ -2820,6 +2936,7 @@ type
     SetCameraTrackingSpace: FnTable_IVRTrackedCamera_SetCameraTrackingSpace;
     GetCameraTrackingSpace: FnTable_IVRTrackedCamera_GetCameraTrackingSpace;
   end;
+  PIVRTrackedCamera = ^TIVRTrackedCamera;
 
   TIVRApplications = record
     AddApplicationManifest: FnTable_IVRApplications_AddApplicationManifest;
@@ -2853,6 +2970,7 @@ type
     LaunchInternalProcess: FnTable_IVRApplications_LaunchInternalProcess;
     GetCurrentSceneProcessId: FnTable_IVRApplications_GetCurrentSceneProcessId;
   end;
+  PIVRApplications = ^TIVRApplications;
 
   TIVRChaperone = record
     GetCalibrationState: FnTable_IVRChaperone_GetCalibrationState;
@@ -2863,7 +2981,9 @@ type
     GetBoundsColor: FnTable_IVRChaperone_GetBoundsColor;
     AreBoundsVisible: FnTable_IVRChaperone_AreBoundsVisible;
     ForceBoundsVisible: FnTable_IVRChaperone_ForceBoundsVisible;
+    ResetZeroPose: FnTable_IVRChaperone_ResetZeroPose;
   end;
+  PIVRChaperone = ^TIVRChaperone;
 
   TIVRChaperoneSetup = record
     CommitWorkingCopy: FnTable_IVRChaperoneSetup_CommitWorkingCopy;
@@ -2887,6 +3007,7 @@ type
     HideWorkingSetPreview: FnTable_IVRChaperoneSetup_HideWorkingSetPreview;
     RoomSetupStarting: FnTable_IVRChaperoneSetup_RoomSetupStarting;
   end;
+  PIVRChaperoneSetup = ^TIVRChaperoneSetup;
 
   TIVRCompositor = record
     SetTrackingSpace: FnTable_IVRCompositor_SetTrackingSpace;
@@ -2941,6 +3062,7 @@ type
     GetLastPosePredictionIDs: FnTable_IVRCompositor_GetLastPosePredictionIDs;
     GetPosesForFrame: FnTable_IVRCompositor_GetPosesForFrame;
   end;
+  PIVRCompositor = ^TIVRCompositor;
 
   TIVROverlay = record
     FindOverlay: FnTable_IVROverlay_FindOverlay;
@@ -3022,6 +3144,7 @@ type
     ShowMessageOverlay: FnTable_IVROverlay_ShowMessageOverlay;
     CloseMessageOverlay: FnTable_IVROverlay_CloseMessageOverlay;
   end;
+  PIVROverlay = ^TIVROverlay;
 
   TIVROverlayView = record
     AcquireOverlayView: FnTable_IVROverlayView_AcquireOverlayView;
@@ -3029,6 +3152,7 @@ type
     PostOverlayEvent: FnTable_IVROverlayView_PostOverlayEvent;
     IsViewingPermitted: FnTable_IVROverlayView_IsViewingPermitted;
   end;
+  PIVROverlayView = ^TIVROverlayView;
 
   TIVRHeadsetView = record
     SetHeadsetViewSize: FnTable_IVRHeadsetView_SetHeadsetViewSize;
@@ -3041,6 +3165,7 @@ type
     SetHeadsetViewBlendRange: FnTable_IVRHeadsetView_SetHeadsetViewBlendRange;
     GetHeadsetViewBlendRange: FnTable_IVRHeadsetView_GetHeadsetViewBlendRange;
   end;
+  PIVRHeadsetView = ^TIVRHeadsetView;
 
   TIVRRenderModels = record
     LoadRenderModel_Async: FnTable_IVRRenderModels_LoadRenderModel_Async;
@@ -3063,11 +3188,13 @@ type
     GetRenderModelOriginalPath: FnTable_IVRRenderModels_GetRenderModelOriginalPath;
     GetRenderModelErrorNameFromEnum: FnTable_IVRRenderModels_GetRenderModelErrorNameFromEnum;
   end;
+  PIVRRenderModels = ^TIVRRenderModels;
 
   TIVRNotifications = record
     CreateNotification: FnTable_IVRNotifications_CreateNotification;
     RemoveNotification: FnTable_IVRNotifications_RemoveNotification;
   end;
+  PIVRNotifications = ^TIVRNotifications;
 
   TIVRSettings = record
     GetSettingsErrorNameFromEnum: FnTable_IVRSettings_GetSettingsErrorNameFromEnum;
@@ -3082,6 +3209,7 @@ type
     RemoveSection: FnTable_IVRSettings_RemoveSection;
     RemoveKeyInSection: FnTable_IVRSettings_RemoveKeyInSection;
   end;
+  PIVRSettings = ^TIVRSettings;
 
   TIVRScreenshots = record
     RequestScreenshot: FnTable_IVRScreenshots_RequestScreenshot;
@@ -3092,11 +3220,13 @@ type
     TakeStereoScreenshot: FnTable_IVRScreenshots_TakeStereoScreenshot;
     SubmitScreenshot: FnTable_IVRScreenshots_SubmitScreenshot;
   end;
+  PIVRScreenshots = ^TIVRScreenshots;
 
   TIVRResources = record
     LoadSharedResource: FnTable_IVRResources_LoadSharedResource;
     GetResourceFullPath: FnTable_IVRResources_GetResourceFullPath;
   end;
+  PIVRResources = ^TIVRResources;
 
   TIVRDriverManager = record
     GetDriverCount: FnTable_IVRDriverManager_GetDriverCount;
@@ -3104,6 +3234,7 @@ type
     GetDriverHandle: FnTable_IVRDriverManager_GetDriverHandle;
     IsEnabled: FnTable_IVRDriverManager_IsEnabled;
   end;
+  PIVRDriverManager = ^TIVRDriverManager;
 
   TIVRInput = record
     SetActionManifestPath: FnTable_IVRInput_SetActionManifestPath;
@@ -3139,6 +3270,7 @@ type
     OpenBindingUI: FnTable_IVRInput_OpenBindingUI;
     GetBindingVariant: FnTable_IVRInput_GetBindingVariant;
   end;
+  PIVRInput = ^TIVRInput;
 
   TIVRIOBuffer = record
     Open: FnTable_IVRIOBuffer_Open;
@@ -3148,6 +3280,7 @@ type
     PropertyContainer: FnTable_IVRIOBuffer_PropertyContainer;
     HasReaders: FnTable_IVRIOBuffer_HasReaders;
   end;
+  PIVRIOBuffer = ^TIVRIOBuffer;
 
   TIVRSpatialAnchors = record
     CreateSpatialAnchorFromDescriptor: FnTable_IVRSpatialAnchors_CreateSpatialAnchorFromDescriptor;
@@ -3155,6 +3288,7 @@ type
     GetSpatialAnchorPose: FnTable_IVRSpatialAnchors_GetSpatialAnchorPose;
     GetSpatialAnchorDescriptor: FnTable_IVRSpatialAnchors_GetSpatialAnchorDescriptor;
   end;
+  PIVRSpatialAnchors = ^TIVRSpatialAnchors;
 
   TIVRDebug = record
     EmitVrProfilerEvent: FnTable_IVRDebug_EmitVrProfilerEvent;
@@ -3162,6 +3296,7 @@ type
     FinishVrProfilerEvent: FnTable_IVRDebug_FinishVrProfilerEvent;
     DriverDebugRequest: FnTable_IVRDebug_DriverDebugRequest;
   end;
+  PIVRDebug = ^TIVRDebug;
 
   TIVRProperties = record
     ReadPropertyBatch: FnTable_IVRProperties_ReadPropertyBatch;
@@ -3169,6 +3304,7 @@ type
     GetPropErrorNameFromEnum: FnTable_IVRProperties_GetPropErrorNameFromEnum;
     TrackedDeviceToPropertyContainer: FnTable_IVRProperties_TrackedDeviceToPropertyContainer;
   end;
+  PIVRProperties = ^TIVRProperties;
 
   TIVRPaths = record
     ReadPathBatch: FnTable_IVRPaths_ReadPathBatch;
@@ -3176,6 +3312,7 @@ type
     StringToHandle: FnTable_IVRPaths_StringToHandle;
     HandleToString: FnTable_IVRPaths_HandleToString;
   end;
+  PIVRPaths = ^TIVRPaths;
 
   TIVRBlockQueue = record
     Create: FnTable_IVRBlockQueue_Create;
@@ -3188,6 +3325,7 @@ type
     ReleaseReadOnlyBlock: FnTable_IVRBlockQueue_ReleaseReadOnlyBlock;
     QueueHasReader: FnTable_IVRBlockQueue_QueueHasReader;
   end;
+  PIVRBlockQueue = ^TIVRBlockQueue;
 
 
 var
@@ -3214,6 +3352,16 @@ var
   IVRProperties: TIVRProperties;
   IVRPaths: TIVRPaths;
   IVRBlockQueue: TIVRBlockQueue;
+  VR_InitInternal: FnTable_VR_InitInternal;
+  VR_ShutdownInternal: FnTable_VR_ShutdownInternal;
+  VR_IsHmdPresent: FnTable_VR_IsHmdPresent;
+  VR_GetGenericInterface: FnTable_VR_GetGenericInterface;
+  VR_IsRuntimeInstalled: FnTable_VR_IsRuntimeInstalled;
+  VR_GetVRInitErrorAsSymbol: FnTable_VR_GetVRInitErrorAsSymbol;
+  VR_GetVRInitErrorAsEnglishDescription: FnTable_VR_GetVRInitErrorAsEnglishDescription;
+
+
+function OpenVR_Load: Boolean;
 
 implementation
 
@@ -3223,6 +3371,14 @@ var
 begin;
   Lib := LoadLibrary(OVRLIB);
   if Lib = dynlibs.NilHandle then Exit(false);
+
+  VR_InitInternal := GetProcedureAddress(Lib, 'VR_InitInternal');
+  VR_ShutdownInternal := GetProcedureAddress(Lib, 'VR_ShutdownInternal');
+  VR_IsHmdPresent := GetProcedureAddress(Lib, 'VR_IsHmdPresent');
+  VR_GetGenericInterface := GetProcedureAddress(Lib, 'VR_GetGenericInterface');
+  VR_IsRuntimeInstalled := GetProcedureAddress(Lib, 'VR_IsRuntimeInstalled');
+  VR_GetVRInitErrorAsSymbol := GetProcedureAddress(Lib, 'VR_GetVRInitErrorAsSymbol');
+  VR_GetVRInitErrorAsEnglishDescription := GetProcedureAddress(Lib, 'VR_GetVRInitErrorAsEnglishDescription');
 
   IVRSystem.GetRecommendedRenderTargetSize := GetProcedureAddress(Lib, 'GetRecommendedRenderTargetSize');
   IVRSystem.GetProjectionMatrix := GetProcedureAddress(Lib, 'GetProjectionMatrix');
@@ -3236,7 +3392,6 @@ begin;
   IVRSystem.IsDisplayOnDesktop := GetProcedureAddress(Lib, 'IsDisplayOnDesktop');
   IVRSystem.SetDisplayVisibility := GetProcedureAddress(Lib, 'SetDisplayVisibility');
   IVRSystem.GetDeviceToAbsoluteTrackingPose := GetProcedureAddress(Lib, 'GetDeviceToAbsoluteTrackingPose');
-  IVRSystem.ResetSeatedZeroPose := GetProcedureAddress(Lib, 'ResetSeatedZeroPose');
   IVRSystem.GetSeatedZeroPoseToStandingAbsoluteTrackingPose := GetProcedureAddress(Lib, 'GetSeatedZeroPoseToStandingAbsoluteTrackingPose');
   IVRSystem.GetRawZeroPoseToStandingAbsoluteTrackingPose := GetProcedureAddress(Lib, 'GetRawZeroPoseToStandingAbsoluteTrackingPose');
   IVRSystem.GetSortedTrackedDeviceIndicesOfClass := GetProcedureAddress(Lib, 'GetSortedTrackedDeviceIndicesOfClass');
@@ -3330,6 +3485,7 @@ begin;
   IVRChaperone.GetBoundsColor := GetProcedureAddress(Lib, 'GetBoundsColor');
   IVRChaperone.AreBoundsVisible := GetProcedureAddress(Lib, 'AreBoundsVisible');
   IVRChaperone.ForceBoundsVisible := GetProcedureAddress(Lib, 'ForceBoundsVisible');
+  IVRChaperone.ResetZeroPose := GetProcedureAddress(Lib, 'ResetZeroPose');
 
   IVRChaperoneSetup.CommitWorkingCopy := GetProcedureAddress(Lib, 'CommitWorkingCopy');
   IVRChaperoneSetup.RevertWorkingCopy := GetProcedureAddress(Lib, 'RevertWorkingCopy');
