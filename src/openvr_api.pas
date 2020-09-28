@@ -4,7 +4,6 @@ unit openvr_api;
 
 {$mode delphi}
 {$macro on}
-{$modeswitch advancedrecords}
 {$ifdef windows}
   {$define OVRCALL:=stdcall}
   {$define OVRLIB:='openvr_api.dll'}
