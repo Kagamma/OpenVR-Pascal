@@ -11,6 +11,7 @@ unit openvr_api;
   {$define OVRCALL:=cdecl}
   {$define OVRLIB:='libopenvr_api.so'}
 {$endif}
+{$Z4}
 
 interface
 
