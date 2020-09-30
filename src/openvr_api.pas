@@ -9,7 +9,7 @@ unit openvr_api;
   {$define OVRLIB:='openvr_api.dll'}
 {$else}
   {$define OVRCALL:=cdecl}
-  {$define OVRLIB:='openvr_api.so'}
+  {$define OVRLIB:='libopenvr_api.so'}
 {$endif}
 
 interface
