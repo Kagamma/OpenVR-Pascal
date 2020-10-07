@@ -1,0 +1,7 @@
+.vscode
+build.bat
+*.o
+*.ppu
+*.exe
+*.a
+*.dll
