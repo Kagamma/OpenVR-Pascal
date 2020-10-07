@@ -216,7 +216,7 @@ end;
 
 procedure LoopRenderer(const View, Proj: TMatrix4f);
 var
-  T, R, S, M: TMatrix4f;
+  T, R, M: TMatrix4f;
   I, J, K: Integer;
 begin
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
@@ -232,8 +232,7 @@ begin
       for I := CMIN to CMAX do
       begin
         CreateTranslate(T, Vector(I * 5, J * 5, K * 5));
-        Scale(S, 0.05);
-        M := S * T * R;
+        M := T * R;
         glUniformMatrix4fv(FlatShader.Loc[0], 1, GL_FALSE, @M);
         glUniform3fv(FlatShader.Loc[3], 1, @ColorArray[K,J,I]);
         glDrawArrays(GL_TRIANGLES, 0, Length(Vertices) div 3);

@@ -394,7 +394,7 @@ begin
     end;
   end;
   // Process HMD position
-  IVRCompositor^.WaitGetPoses(@TrackedDevicePoses, 7, nil, 0);
+  IVRCompositor^.WaitGetPoses(@TrackedDevicePoses, 8, nil, 0);
   for I := 0 to 7 do
   begin
     case IVRSystem^.GetTrackedDeviceClass(I) of
@@ -430,7 +430,7 @@ begin
   glBindFramebuffer(GL_FRAMEBUFFER, EyeLeftFB.RenderFramebufferID);
   glViewport(0, 0, RenderWidth, RenderHeight);
   LoopRenderer(Left, EyeLeftProj);
-  RenderVRControllers(Left, EyeLeftProj);
+ // RenderVRControllers(Left, EyeLeftProj);
   glDisable(GL_MULTISAMPLE);
   glBindFramebuffer(GL_READ_FRAMEBUFFER, EyeLeftFB.RenderFramebufferID);
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, EyeLeftFB.ResolveFramebufferID);
