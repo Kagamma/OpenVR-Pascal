@@ -9,15 +9,15 @@ const
   WIDTH = 1366;
   HEIGHT = 768;
   EyeVerticles: array[0..31] of GLfloat = (
-		-0.9, -0.9, 0.0, 0.0,
-		-0.05, -0.9, 1.0, 0.0,
-		-0.05, 0.9, 1.0, 1.0,
-		-0.9, 0.9, 0.0, 1.0,
-		// Right eye
-		0.05, -0.9, 0.0, 0.0,
-		0.9, -0.9, 1.0, 0.0,
-		0.9, 0.9, 1.0, 1.0,
-		0.05, 0.9, 0.0, 1.0
+    -0.9, -0.9, 0.0, 0.0,
+    -0.05, -0.9, 1.0, 0.0,
+    -0.05, 0.9, 1.0, 1.0,
+    -0.9, 0.9, 0.0, 1.0,
+    // Right eye
+    0.05, -0.9, 0.0, 0.0,
+    0.9, -0.9, 1.0, 0.0,
+    0.9, 0.9, 1.0, 1.0,
+    0.05, 0.9, 0.0, 1.0
   );
   EyeIndices: array[0..11] of GLushort = (
     0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7
@@ -103,17 +103,17 @@ var
   Status: GLenum;
 begin
   glGenFramebuffers(1, @Result.RenderFramebufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, Result.RenderFramebufferID);
+  glBindFramebuffer(GL_FRAMEBUFFER, Result.RenderFramebufferID);
 
-	glGenRenderbuffers(1, @Result.DepthID);
-	glBindRenderbuffer(GL_RENDERBUFFER, Result.DepthID);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, Width, Height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,	Result.DepthID);
+  glGenRenderbuffers(1, @Result.DepthID);
+  glBindRenderbuffer(GL_RENDERBUFFER, Result.DepthID);
+  glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT, Width, Height);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,	Result.DepthID);
 
-	glGenTextures(1, @Result.RenderTextureID);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, Result.RenderTextureID);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, Width, Height, GL_TRUE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,	Result.RenderTextureID, 0);
+  glGenTextures(1, @Result.RenderTextureID);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, Result.RenderTextureID);
+  glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, Width, Height, GL_TRUE);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,	Result.RenderTextureID, 0);
 
   Status := glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if Status <> GL_FRAMEBUFFER_COMPLETE then
@@ -122,14 +122,14 @@ begin
     Halt;
   end;
   glGenFramebuffers(1, @Result.ResolveFramebufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, Result.ResolveFramebufferID);
+  glBindFramebuffer(GL_FRAMEBUFFER, Result.ResolveFramebufferID);
 
-	glGenTextures(1, @Result.ResolveTextureID);
-	glBindTexture(GL_TEXTURE_2D, Result.ResolveTextureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nil);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,	Result.ResolveTextureID, 0);
+  glGenTextures(1, @Result.ResolveTextureID);
+  glBindTexture(GL_TEXTURE_2D, Result.ResolveTextureID);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nil);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,	Result.ResolveTextureID, 0);
 
   Status := glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if Status <> GL_FRAMEBUFFER_COMPLETE then
@@ -196,47 +196,47 @@ begin
   end;
 
   // create and bind a VAO to hold state for this model
-	glGenVertexArrays(1, @Result.Mesh.VertexArray);
-	glBindVertexArray(Result.Mesh.VertexArray);
+  glGenVertexArrays(1, @Result.Mesh.VertexArray);
+  glBindVertexArray(Result.Mesh.VertexArray);
 
-	// Populate a vertex buffer
-	glGenBuffers(1, @Result.Mesh.VertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, Result.Mesh.VertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, SizeOf(RenderModel_Vertex_t) * POVRRenderModel^.unVertexCount, POVRRenderModel^.rVertexData, GL_STATIC_DRAW);
+  // Populate a vertex buffer
+  glGenBuffers(1, @Result.Mesh.VertexBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, Result.Mesh.VertexBuffer);
+  glBufferData(GL_ARRAY_BUFFER, SizeOf(RenderModel_Vertex_t) * POVRRenderModel^.unVertexCount, POVRRenderModel^.rVertexData, GL_STATIC_DRAW);
 
-	// Identify the components in the vertex buffer
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 32, Pointer(0));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 32, Pointer(12));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 32, Pointer(24));
+  // Identify the components in the vertex buffer
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 32, Pointer(0));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 32, Pointer(12));
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 32, Pointer(24));
 
-	// Create and populate the index buffer
-	glGenBuffers(1, @Result.Mesh.ArrayBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Result.Mesh.ArrayBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, SizeOf(Word) * POVRRenderModel^.unTriangleCount * 3, POVRRenderModel^.rIndexData, GL_STATIC_DRAW);
+  // Create and populate the index buffer
+  glGenBuffers(1, @Result.Mesh.ArrayBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Result.Mesh.ArrayBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, SizeOf(Word) * POVRRenderModel^.unTriangleCount * 3, POVRRenderModel^.rIndexData, GL_STATIC_DRAW);
 
-	glBindVertexArray(0);
+  glBindVertexArray(0);
 
-	// create and populate the texture
-	glGenTextures(1, @Result.Mesh.Texture);
-	glBindTexture(GL_TEXTURE_2D, Result.Mesh.Texture);
+  // create and populate the texture
+  glGenTextures(1, @Result.Mesh.Texture);
+  glBindTexture(GL_TEXTURE_2D, Result.Mesh.Texture);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, POVRRenderTexture^.unWidth, POVRRenderTexture^.unHeight,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, POVRRenderTexture^.rubTextureMapData);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, POVRRenderTexture^.unWidth, POVRRenderTexture^.unHeight,
+    0, GL_RGBA, GL_UNSIGNED_BYTE, POVRRenderTexture^.rubTextureMapData);
 
-	// If this renders black ask McJohn what's wrong.
-	glGenerateMipmap(GL_TEXTURE_2D);
+  // If this renders black ask McJohn what's wrong.
+  glGenerateMipmap(GL_TEXTURE_2D);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindVertexArray(0);
 
-	Result.Mesh.VertexCount := POVRRenderModel^.unTriangleCount * 3;
+  Result.Mesh.VertexCount := POVRRenderModel^.unTriangleCount * 3;
 end;
 
 procedure LoadEyeMesh;
@@ -245,8 +245,8 @@ begin
   glBindVertexArray(EyeVAO);
 
   glGenBuffers(1, @EyeVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, EyeVBO);
-	glBufferData(GL_ARRAY_BUFFER, SizeOf(EyeVerticles), @EyeVerticles, GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, EyeVBO);
+  glBufferData(GL_ARRAY_BUFFER, SizeOf(EyeVerticles), @EyeVerticles, GL_STATIC_DRAW);
 
   glGenBuffers(1, @EyeEAB );
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EyeEAB);
@@ -259,7 +259,7 @@ begin
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 16, Pointer(8));
 
   glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 end;
 
@@ -285,38 +285,38 @@ begin
   end;
   VR_InitInternal(@Error, VRApplication_Scene);
   if Error <> VRInitError_None then
-	begin
-		Writeln('VR_InitInternal: ', Error);
-		Halt;
-	end;
+  begin
+    Writeln('VR_InitInternal: ', Error);
+    Halt;
+  end;
   FnTableName := 'FnTable:' + IVRSystem_Version + #0;
   IVRSystem := PIVRSystem(VR_GetGenericInterface(PChar(FnTableName), @Error));
   if Error <> VRInitError_None then
-	begin
-		Writeln('VR_GetGenericInterface(', IVRSystem_Version, '): ', Error);
-		Halt;
-	end;
+  begin
+    Writeln('VR_GetGenericInterface(', IVRSystem_Version, '): ', Error);
+    Halt;
+  end;
   FnTableName := 'FnTable:' + IVRCompositor_Version + #0;
   IVRCompositor := PIVRCompositor(VR_GetGenericInterface(PChar(FnTableName), @Error));
   if Error <> VRInitError_None then
-	begin
-		Writeln('VR_GetGenericInterface(', IVRCompositor_Version, '): ', Error);
-		Halt;
-	end;
+  begin
+    Writeln('VR_GetGenericInterface(', IVRCompositor_Version, '): ', Error);
+    Halt;
+  end;
   FnTableName := 'FnTable:' + IVRRenderModels_Version + #0;
   IVRRenderModels := PIVRRenderModels(VR_GetGenericInterface(PChar(FnTableName), @Error));
   if Error <> VRInitError_None then
-	begin
-		Writeln('VR_GetGenericInterface(', IVRRenderModels_Version, '): ', Error);
-		Halt;
-	end;
+  begin
+    Writeln('VR_GetGenericInterface(', IVRRenderModels_Version, '): ', Error);
+    Halt;
+  end;
   FnTableName := 'FnTable:' + IVRInput_Version + #0;
   IVRInput := PIVRInput(VR_GetGenericInterface(PChar(FnTableName), @Error));
   if Error <> VRInitError_None then
-	begin
-		Writeln('VR_GetGenericInterface(', IVRInput_Version, '): ', Error);
-		Halt;
-	end;
+  begin
+    Writeln('VR_GetGenericInterface(', IVRInput_Version, '): ', Error);
+    Halt;
+  end;
 
   // Writeln(IVRInput^.SetActionManifestPath(PChar(StringReplace(GetCurrentDir, '\', '/', [rfReplaceAll]) + '/hellovr_actions.json')));
   // IVRInput^.GetActionHandle('/actions/demo/in/Hand_Left', @Controllers[0].ActionPose);
@@ -346,21 +346,21 @@ var
   I: Integer;
 begin
   glUseProgram(TextureShader.ProgramID);
-	glUniformMatrix4fv(TextureShader.Loc[1], 1, GL_FALSE, @Pose);
-	glUniformMatrix4fv(TextureShader.Loc[2], 1, GL_FALSE, @Proj);
-	for I := 0 to 1 do
+  glUniformMatrix4fv(TextureShader.Loc[1], 1, GL_FALSE, @Pose);
+  glUniformMatrix4fv(TextureShader.Loc[2], 1, GL_FALSE, @Proj);
+  for I := 0 to 1 do
   begin
     if Controllers[I].Side < 0 then
       continue;
-	  glUniformMatrix4fv(TextureShader.Loc[0], 1, GL_FALSE, @Controllers[I].Pose);
+    glUniformMatrix4fv(TextureShader.Loc[0], 1, GL_FALSE, @Controllers[I].Pose);
     glBindVertexArray(Controllers[I].Mesh.VertexArray);
-	  glActiveTexture(GL_TEXTURE0);
-	  glBindTexture(GL_TEXTURE_2D, Controllers[I].Mesh.Texture);
-  	glDrawElements(GL_TRIANGLES, Controllers[I].Mesh.VertexCount, GL_UNSIGNED_SHORT, Pointer(0));
-	  glBindVertexArray(0);
-	  glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, Controllers[I].Mesh.Texture);
+    glDrawElements(GL_TRIANGLES, Controllers[I].Mesh.VertexCount, GL_UNSIGNED_SHORT, Pointer(0));
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
   end;
-	glUseProgram(0);
+  glUseProgram(0);
 end;
 
 procedure LoopVR;

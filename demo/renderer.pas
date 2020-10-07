@@ -193,16 +193,16 @@ begin
   glBindBuffer(GL_ARRAY_BUFFER, NormalBuffer);
   glBufferData(GL_ARRAY_BUFFER, Sizeof(Normals), @Normals, GL_STATIC_DRAW);
 
-	glBindVertexArray(VertexArray);
+  glBindVertexArray(VertexArray);
   glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-	glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, Pointer(0));
   glBindBuffer(GL_ARRAY_BUFFER, NormalBuffer);
-	glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, Pointer(0));
 
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   for K := CMIN to CMAX do
     for J := CMIN to CMAX do
