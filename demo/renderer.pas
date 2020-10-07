@@ -92,8 +92,8 @@ const
     0, 1, 0,
     0, 1, 0
   );
-  CMIN = 0;
-  CMAX = 0;
+  CMIN = -3;
+  CMAX = 3;
 
 type
   TShader = record
