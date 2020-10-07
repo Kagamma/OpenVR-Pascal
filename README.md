@@ -1,6 +1,6 @@
 ### Unofficial Free Pascal bindings for Valve's OpenVR SDK ###
 
-### The demo can be built with the following command on win32 environment:
+The demo can be built with the following command on win32 environment:
 
 * fpc -Mobjfpc -Fusrc -FEbin -gl -gw2 demo/demo.pas
 
